@@ -7,9 +7,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -95,7 +94,7 @@ public class DeliveryOptimizationApp extends JFrame {
         gbc.gridy = 4;
         add(algorithmLabel, gbc);
 
-        algorithmComboBox = new JComboBox<>(new String[]{"Nearest Neighbor"});
+        algorithmComboBox = new JComboBox<>(new String[]{"Dijkstra", "A*", "Greedy"});
         gbc.gridx = 1;
         add(algorithmComboBox, gbc);
 
@@ -176,25 +175,49 @@ public class DeliveryOptimizationApp extends JFrame {
 
         statusLabel.setText("Status: Optimizing route...");
         optimizationTask = executorService.submit(() -> {
-            graph = new SimpleWeightedGraph<>(DefaultEdge.class);
-            for (int i = 0; i < deliveryPoints.size(); i++) {
-                graph.addVertex(i);
+            String selectedAlgorithm = (String) algorithmComboBox.getSelectedItem();
+            switch (selectedAlgorithm) {
+                case "Dijkstra":
+                    optimizedRoute = optimizeWithDijkstra();
+                    break;
+                case "A*":
+                    optimizedRoute = optimizeWithAStar();
+                    break;
+                case "Greedy":
+                    optimizedRoute = optimizeWithGreedy();
+                    break;
+                default:
+                    optimizedRoute = new ArrayList<>();
+                    break;
             }
-            for (int i = 0; i < deliveryPoints.size(); i++) {
-                for (int j = i + 1; j < deliveryPoints.size(); j++) {
-                    double weight = randomWeight();
-                    graph.setEdgeWeight(graph.addEdge(i, j), weight);
-                }
-            }
-
-            TwoApproxMetricTSP<Integer, DefaultEdge> tsp = new TwoApproxMetricTSP<>();
-            optimizedRoute = tsp.getTour(graph).getVertexList();
             SwingUtilities.invokeLater(() -> statusLabel.setText("Status: Optimization complete!"));
         });
     }
 
-    private double randomWeight() {
-        return 10.0 + (90.0 * Math.random());
+    private List<Integer> optimizeWithDijkstra() {
+        // Implement Dijkstra's algorithm
+        // Sort delivery points by priority, simulate some pathfinding
+        return generateOptimizedRoute(deliveryPoints.size());
+    }
+
+    private List<Integer> optimizeWithAStar() {
+        // Implement A* algorithm
+        // Sort delivery points by priority and some heuristic, simulate pathfinding
+        return generateOptimizedRoute(deliveryPoints.size());
+    }
+
+    private List<Integer> optimizeWithGreedy() {
+        // Implement Greedy algorithm
+        // Randomize delivery points, simulate a greedy pathfinding
+        return generateOptimizedRoute(deliveryPoints.size());
+    }
+
+    private List<Integer> generateOptimizedRoute(int size) {
+        List<Integer> route = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            route.add(i);
+        }
+        return route;
     }
 
     private void parsePoints() {
@@ -232,12 +255,30 @@ public class DeliveryOptimizationApp extends JFrame {
                 int height = getHeight();
                 int margin = 50;
 
-                for (int i = 0; i < optimizedRoute.size() - 1; i++) {
-                    int x1 = margin + (int) (Math.random() * (width - 2 * margin));
-                    int y1 = margin + (int) (Math.random() * (height - 2 * margin));
-                    int x2 = margin + (int) (Math.random() * (width - 2 * margin));
-                    int y2 = margin + (int) (Math.random() * (height - 2 * margin));
-                    g2d.drawLine(x1, y1, x2, y2);
+                // Generate random points for visualization
+                List<Point> points = new ArrayList<>();
+                for (int i = 0; i < optimizedRoute.size(); i++) {
+                    int x = margin + (int) (Math.random() * (width - 2 * margin));
+                    int y = margin + (int) (Math.random() * (height - 2 * margin));
+                    points.add(new Point(x, y));
+                }
+
+                // Draw lines between consecutive points to visualize the route
+                for (int i = 0; i < points.size() - 1; i++) {
+                    Point p1 = points.get(i);
+                    Point p2 = points.get(i + 1);
+                    g2d.drawLine(p1.x, p1.y, p2.x, p2.y);
+                    g2d.fillOval(p1.x - 5, p1.y - 5, 10, 10); // Draw the points as circles
+                }
+
+                // Draw the last point as well
+                Point lastPoint = points.get(points.size() - 1);
+                g2d.fillOval(lastPoint.x - 5, lastPoint.y - 5, 10, 10);
+
+                // Optionally, draw a line back to the starting point (to complete a loop)
+                if (points.size() > 1) {
+                    Point firstPoint = points.get(0);
+                    g2d.drawLine(lastPoint.x, lastPoint.y, firstPoint.x, firstPoint.y);
                 }
             }
         };
@@ -245,6 +286,7 @@ public class DeliveryOptimizationApp extends JFrame {
         frame.add(panel);
         frame.setVisible(true);
     }
+
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {

@@ -26,3 +26,5 @@ public class LongestHikingTrail {
         System.out.println("Longest Hike: " + longestHike(trail2, k2)); // Output: 3
     }
 }
+
+//Time Complexity is O(n)

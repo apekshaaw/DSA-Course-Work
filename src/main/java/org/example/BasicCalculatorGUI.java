@@ -186,3 +186,5 @@ public class BasicCalculatorGUI extends JFrame {
         });
     }
 }
+
+//Time Complexity is O(n)

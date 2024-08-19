@@ -25,3 +25,5 @@ public class MovieSeating {
         System.out.println(canSitTogether(nums2, indexDiff2, valueDiff2)); // Output: false
     }
 }
+
+//Time Complexity is O(n)

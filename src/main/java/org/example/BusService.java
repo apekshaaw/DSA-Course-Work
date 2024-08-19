@@ -33,3 +33,4 @@ public class BusService {
         System.out.println(Arrays.toString(optimizeBoarding(passengers2, k2))); // Output: [3, 2, 1, 4, 5]
     }
 }
+//Time Complexity is O(n), where n is the number of passengers.

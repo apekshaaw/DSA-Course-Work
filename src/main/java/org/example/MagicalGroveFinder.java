@@ -70,3 +70,5 @@ public class MagicalGroveFinder {
         System.out.println(finder.findLargestMagicalGrove(root)); // Output: 20
     }
 }
+
+//Time Complexity is O(n)

@@ -69,3 +69,4 @@ class ClassroomScheduler {
         System.out.println(findBusiestClassroom(n2, classes2)); // Output: 1
     }
 }
+//Time Complexity is O(nlogn)
